@@ -178,9 +178,10 @@ class Stellar(object):
         self.raw_db.session.close()
         self.db.session.close()
 
-        pid = os.fork() if hasattr(os, 'fork') else None
-        if pid:
-            return
+        # Want to use this in code so synchronizing the snapshot/restore
+#        pid = os.fork() if hasattr(os, 'fork') else None
+#        if pid:
+#            return
 
         self.init_database()
         self.operations = Operations(self.raw_conn, self.config)
@@ -189,7 +190,7 @@ class Stellar(object):
         snapshot.worker_pid = os.getpid()
         self.db.session.commit()
         self.inline_slave_copy(snapshot)
-        sys.exit()
+#        sys.exit()
 
     def inline_slave_copy(self, snapshot):
         for table in snapshot.tables:
