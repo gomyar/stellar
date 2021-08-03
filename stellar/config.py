@@ -47,24 +47,29 @@ def get_config_path():
 
 def load_config():
     config = {}
-    current_directory = os.getcwd()
-    while True:
-        try:
-            with open(
-                os.path.join(current_directory, 'stellar.yaml'),
-                'rb'
-            ) as fp:
-                config = yaml.safe_load(fp)
+    stellar_config_env = os.getenv('STELLAR_CONFIG')
+    if stellar_config_env:
+        if os.path.exists(stellar_config_env):
+            config = yaml.safe_load(open(stellar_config_env))
+    else:
+        current_directory = os.getcwd()
+        while True:
+            try:
+                with open(
+                    os.path.join(current_directory, 'stellar.yaml'),
+                    'rb'
+                ) as fp:
+                    config = yaml.safe_load(fp)
+                    break
+            except IOError:
+                pass
+
+            if current_directory == '/':
                 break
-        except IOError:
-            pass
 
-        if current_directory == '/':
-            break
-
-        current_directory = os.path.abspath(
-            os.path.join(current_directory, '..')
-        )
+            current_directory = os.path.abspath(
+                os.path.join(current_directory, '..')
+            )
 
     if not config:
         raise MissingConfig()
