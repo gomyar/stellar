@@ -58,12 +58,13 @@ def load_config():
                 break
         except IOError:
             pass
-        current_directory = os.path.abspath(
-            os.path.join(current_directory, '..')
-        )
 
         if current_directory == '/':
             break
+
+        current_directory = os.path.abspath(
+            os.path.join(current_directory, '..')
+        )
 
     if not config:
         raise MissingConfig()
